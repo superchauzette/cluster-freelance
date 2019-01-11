@@ -150,6 +150,44 @@ function FreelanceForm({ freelances }) {
   );
 }
 
+function Post({ post }) {
+  return (
+    <p>
+      {post.msg} - {post.dateMsg} - {post.techno}
+    </p>
+  );
+}
+
+function Posts() {
+  const [posts, setPosts] = useState([]);
+  // ADD Post
+  // useEffect(() => {
+  //   db.collection("posts")
+  //     .add({
+  //       msg: "Bonjour je cherche un dev React pour le 2 decembre",
+  //       dateMsg: new Date().getTime(),
+  //       techno: ["React"]
+  //     })
+  //     .then(data => console.log("posts", data));
+  // }, []);
+
+  useEffect(() => {
+    db.collection("posts")
+      .get()
+      .then(extractData)
+      .then(data => setPosts(data));
+  }, []);
+
+  return (
+    <div>
+      <h1>Posts</h1>
+      {posts.map(post => (
+        <Post post={post} />
+      ))}
+    </div>
+  );
+}
+
 export const App = () => {
   const [freelances, setFreelances] = useInitFreelance();
   const [value, handleChange, setValue] = useFormChange();
@@ -189,7 +227,7 @@ export const App = () => {
               </div>
             )}
           />
-          <Route path="/posts" render={() => <h1>Posts</h1>} />
+          <Route exact path="/posts" component={Posts} />
         </main>
       </div>
     </Router>
