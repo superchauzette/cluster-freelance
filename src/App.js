@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
 import "./App.css";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
 import Logo from "./logo.svg";
+import dateFns from "date-fns";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Paper from "@material-ui/core/Paper";
+import Chip from "@material-ui/core/Chip";
+import TextField from "@material-ui/core/TextField";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Button from "@material-ui/core/Button";
 
 const config = {
   apiKey: "AIzaSyCWxXcYiEhI9QOIVP5xfVC5-Dd_AvtSZ94",
@@ -26,12 +38,6 @@ function extractData(querySnapshot) {
   return d;
 }
 
-function useInitFreelance() {
-  const [freelances, setFreelances] = useState([]);
-
-  return [freelances, setFreelances];
-}
-
 function useFormChange(freelance) {
   console.log("freelance", freelance);
   const [value, setValue] = useState({});
@@ -51,100 +57,110 @@ function useFormChange(freelance) {
   return [value, handleChange, setValue];
 }
 
+function Input({ ...props }) {
+  return <TextField InputLabelProps={{ shrink: true }} {...props} />;
+}
+
 function FormProfile({ value, onChange }) {
   return (
-    <form
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "20px",
-        border: "1px solid #a29e9e",
-        boxShadow: "rgba(0, 0, 0, 0.07) 0px 3px 2px 2px",
-        width: "1000px"
-      }}
-    >
-      <h2>Mon Profil</h2>
-      <div style={{ display: "flex", width: "100%" }}>
-        <img src={Logo} alt="profil" />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            justifyContent: "space-around"
-          }}
-        >
+    <Paper>
+      <form
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          padding: "20px"
+        }}
+        noValidate
+        autoComplete="off"
+      >
+        <h2>Mon Profil</h2>
+        <div style={{ display: "flex", width: "100%" }}>
+          <img src={Logo} alt="profil" />
           <div
             style={{
               display: "flex",
-              justifyContent: "space-around",
-              width: "100%"
+              flexDirection: "column",
+              width: "100%",
+              justifyContent: "space-around"
             }}
           >
-            <label>
-              disponible:{" "}
-              <input
-                type="checkbox"
-                checked={value.disponible}
-                onChange={e =>
-                  onChange({
-                    disponible: e.target.checked,
-                    dateModifDispo: new Date().getTime()
-                  })(e)
-                }
-              />
-            </label>
-            <label>
-              name: <input value={value.name} onChange={onChange("name")} />{" "}
-            </label>
-            <label>
-              lastname : <input value={value.lastname} onChange={onChange("lastname")} />
-            </label>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-around",
-              width: "100%"
-            }}
-          >
-            societe : <input value={value.societe} onChange={onChange("societe")} />
-            techno : <input value={value.techno} onChange={onChange("techno")} />
-            email : <input value={value.email} onChange={onChange("email")} />
+            <div style={{ display: "flex", justifyContent: "space-around", width: "100%" }}>
+              <label>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={value.disponible}
+                      onChange={e =>
+                        onChange({ disponible: e.target.checked, dateModifDispo: new Date().getTime() })(e)
+                      }
+                    />
+                  }
+                  label="Disponible"
+                />
+              </label>
+              <Input label="Prenom" value={value.name} onChange={onChange("name")} />
+              <Input label="Nom" value={value.lastname} onChange={onChange("lastname")} />
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-around", width: "100%" }}>
+              <Input label="Société" value={value.societe} onChange={onChange("societe")} />
+              <Input label="Techno" value={value.techno} onChange={onChange("techno")} />
+              <Input label="Email" value={value.email} onChange={onChange("email")} />
+            </div>
           </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </Paper>
+  );
+}
+
+function Dot({ color }) {
+  return (
+    <div
+      style={{
+        width: "10px",
+        height: "10px",
+        borderRadius: "50%",
+        backgroundColor: color
+      }}
+    />
   );
 }
 
 function FreelanceForm({ freelances }) {
   return (
-    <div>
+    <div style={{ padding: "20px 50px" }}>
       {freelances.map(freelance => (
-        <div
-          key={freelance.id}
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "0 50px"
-          }}
-        >
-          <div
-            style={{
-              width: "15px",
-              height: "15px",
-              borderRadius: "50%",
-              backgroundColor: freelance.disponible ? "green" : "red"
-            }}
-          />
-          <p>prenom: {freelance.name}</p>
-          <p>nom: {freelance.lastname}</p>
-          <p>societe : {freelance.societe}</p>
-          <p>techno : {freelance.techno}</p>
-          <p>email : {freelance.email}</p>
-        </div>
+        <ExpansionPanel key={freelance.id}>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <div style={{ display: "flex", alignItems: "center", width: "600px", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Dot color={freelance.disponible ? "green" : "red"} />
+                <Typography style={{ marginLeft: "10px" }}>{`${freelance.name} ${freelance.lastname}`}</Typography>
+                <Typography style={{ marginLeft: "3px" }}>
+                  {`${
+                    freelance.disponible
+                      ? "est disponible depuis le " + dateFns.format(freelance.dateModifDispo, "D MMMM YYYY")
+                      : ""
+                  }`}
+                </Typography>
+              </div>
+              <div>
+                {freelance.techno.split(",").map(tech => (
+                  <Chip style={{ marginLeft: "10px" }} label={tech} />
+                ))}
+              </div>
+            </div>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography>
+              <p>nom: {freelance.lastname}</p>
+              <p>societe : {freelance.societe}</p>
+              <p>techno : {freelance.techno}</p>
+              <p>email : {freelance.email}</p>
+            </Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
       ))}
     </div>
   );
@@ -160,16 +176,6 @@ function Post({ post }) {
 
 function Posts() {
   const [posts, setPosts] = useState([]);
-  // ADD Post
-  // useEffect(() => {
-  //   db.collection("posts")
-  //     .add({
-  //       msg: "Bonjour je cherche un dev React pour le 2 decembre",
-  //       dateMsg: new Date().getTime(),
-  //       techno: ["React"]
-  //     })
-  //     .then(data => console.log("posts", data));
-  // }, []);
 
   useEffect(() => {
     db.collection("posts")
@@ -188,8 +194,8 @@ function Posts() {
   );
 }
 
-export const App = () => {
-  const [freelances, setFreelances] = useInitFreelance();
+function PageFreelance() {
+  const [freelances, setFreelances] = useState([]);
   const [value, handleChange, setValue] = useFormChange();
 
   useEffect(
@@ -205,29 +211,39 @@ export const App = () => {
 
   const me = freelances[0] || {};
   useEffect(() => me.id && setValue(me), [me.id]);
+  return (
+    <div>
+      <div style={{ padding: "15px 50px" }}>
+        <FormProfile value={value} onChange={handleChange} />
+      </div>
+      <FreelanceForm freelances={freelances} />
+    </div>
+  );
+}
 
+export const App = () => {
   return (
     <Router>
       <div>
-        <header style={{ padding: "10px" }}>
-          <h1>Cluster Freelance</h1>
-          <NavLink to="/">Frelances</NavLink> <NavLink to="/posts">Posts</NavLink>
+        <header style={{ padding: "0 40px", display: "flex", alignItems: "center" }}>
+          <img
+            style={{ height: "100px" }}
+            src="https://www.cluster-freelance.io/src/images/dist/logo-main.png"
+            alt="logo"
+          />
+          <Button variant="contained" color="primary" component={NavLink} to="/" style={{ margin: "20px" }}>
+            Frelances
+          </Button>
+          <Button variant="contained" color="secondary" component={NavLink} to="/posts">
+            Posts
+          </Button>
         </header>
 
         <main className="App-header">
-          <Route
-            exact
-            path="/"
-            render={() => (
-              <div>
-                <div style={{ padding: "15px 50px" }}>
-                  <FormProfile value={value} onChange={handleChange} />
-                </div>
-                <FreelanceForm freelances={freelances} />
-              </div>
-            )}
-          />
-          <Route exact path="/posts" component={Posts} />
+          <Switch>
+            <Route exact path="/" component={PageFreelance} />
+            <Route exact path="/posts" component={Posts} />
+          </Switch>
         </main>
       </div>
     </Router>
