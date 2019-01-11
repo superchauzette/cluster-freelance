@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, NavLink } from "react-router-dom";
 import "./App.css";
 import * as firebase from "firebase/app";
 import "firebase/firestore";
+import Logo from "./logo.svg";
 
 const config = {
   apiKey: "AIzaSyCWxXcYiEhI9QOIVP5xfVC5-Dd_AvtSZ94",
@@ -14,122 +16,183 @@ const config = {
 firebase.initializeApp(config);
 
 const db = firebase.firestore();
+db.settings({ timestampsInSnapshots: true }); // Disable deprecated features
 
-// Disable deprecated features
-db.settings({
-  timestampsInSnapshots: true
-});
+function extractData(querySnapshot) {
+  let d = [];
+  querySnapshot.forEach(doc => {
+    d.push({ ...doc.data(), id: doc.id });
+  });
+  return d;
+}
 
-function useInitFreelance(countSubmit) {
+function useInitFreelance() {
   const [freelances, setFreelances] = useState([]);
+
+  return [freelances, setFreelances];
+}
+
+function useFormChange(freelance) {
+  console.log("freelance", freelance);
+  const [value, setValue] = useState({});
+
+  const handleChange = key => ({ target }) => {
+    const valueInput = target.type === "checkbox" ? target.checked : target.value;
+    const newValue = typeof key === "object" ? { ...value, ...key } : { ...value, [key]: valueInput };
+    console.log(newValue);
+    setValue(newValue);
+    if (value.id) {
+      db.collection("freelances")
+        .doc(value.id)
+        .set(newValue);
+    }
+  };
+
+  return [value, handleChange, setValue];
+}
+
+function FormProfile({ value, onChange }) {
+  return (
+    <form
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "20px",
+        border: "1px solid #a29e9e",
+        boxShadow: "rgba(0, 0, 0, 0.07) 0px 3px 2px 2px",
+        width: "1000px"
+      }}
+    >
+      <h2>Mon Profil</h2>
+      <div style={{ display: "flex", width: "100%" }}>
+        <img src={Logo} alt="profil" />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            justifyContent: "space-around"
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              width: "100%"
+            }}
+          >
+            <label>
+              disponible:{" "}
+              <input
+                type="checkbox"
+                checked={value.disponible}
+                onChange={e =>
+                  onChange({
+                    disponible: e.target.checked,
+                    dateModifDispo: new Date().getTime()
+                  })(e)
+                }
+              />
+            </label>
+            <label>
+              name: <input value={value.name} onChange={onChange("name")} />{" "}
+            </label>
+            <label>
+              lastname : <input value={value.lastname} onChange={onChange("lastname")} />
+            </label>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+              width: "100%"
+            }}
+          >
+            societe : <input value={value.societe} onChange={onChange("societe")} />
+            techno : <input value={value.techno} onChange={onChange("techno")} />
+            email : <input value={value.email} onChange={onChange("email")} />
+          </div>
+        </div>
+      </div>
+    </form>
+  );
+}
+
+function FreelanceForm({ freelances }) {
+  return (
+    <div>
+      {freelances.map(freelance => (
+        <div
+          key={freelance.id}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "0 50px"
+          }}
+        >
+          <div
+            style={{
+              width: "15px",
+              height: "15px",
+              borderRadius: "50%",
+              backgroundColor: freelance.disponible ? "green" : "red"
+            }}
+          />
+          <p>prenom: {freelance.name}</p>
+          <p>nom: {freelance.lastname}</p>
+          <p>societe : {freelance.societe}</p>
+          <p>techno : {freelance.techno}</p>
+          <p>email : {freelance.email}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export const App = () => {
+  const [freelances, setFreelances] = useInitFreelance();
+  const [value, handleChange, setValue] = useFormChange();
+
   useEffect(
     () => {
       db.collection("freelances")
         .limit(50)
         .get()
-        .then(querySnapshot => {
-          let d = [];
-          querySnapshot.forEach(doc => {
-            d.push({ ...doc.data(), id: doc.id });
-          });
-          return d;
-        })
+        .then(extractData)
         .then(data => setFreelances(data));
     },
-    [countSubmit]
+    [value]
   );
 
-  return [freelances, setFreelances];
-}
-
-function useFormChange() {
-  const [value, setValue] = useState({});
-  const handleChange = key => ({ target }) => {
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    setValue({ ...value, [key]: value });
-  };
-
-  return [value, setValue, handleChange];
-}
-
-export const App = () => {
-  const [countSubmit, setCountSubmit] = useState(0);
-  const [freelances] = useInitFreelance(countSubmit);
-  const [value, setValue, handleChange] = useFormChange();
-
-  console.log({ freelances });
+  const me = freelances[0] || {};
+  useEffect(() => me.id && setValue(me), [me.id]);
 
   return (
-    <div className="App">
-      <header>
-        <h1>Cluster Freelance</h1>
-      </header>
-      <form
-        onSubmit={async e => {
-          e.preventDefault();
-          const colFrelance = db.collection("freelances");
-          const doc = value.id
-            ? colFrelance.doc(value.id).set(value)
-            : colFrelance.add(value);
-          await doc;
-          setCountSubmit(countSubmit + 1);
-          setValue({});
-        }}
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          padding: "20px"
-        }}
-      >
-        disponible:{" "}
-        <input
-          type="checkbox"
-          checked={value.disponible}
-          onChange={handleChange("disponible")}
-        />
-        name: <input value={value.name} onChange={handleChange("name")} />
-        lastname :{" "}
-        <input value={value.lastname} onChange={handleChange("lastname")} />
-        societe :{" "}
-        <input value={value.societe} onChange={handleChange("societe")} />
-        techno :{" "}
-        <input value={value.techno} onChange={handleChange("techno")} />
-        email : <input value={value.email} onChange={handleChange("email")} />
-        <button type="submit"> Envoyer</button>
-        <button type="reset" onClick={() => setValue({})}>
-          Reset
-        </button>
-      </form>
+    <Router>
+      <div>
+        <header style={{ padding: "10px" }}>
+          <h1>Cluster Freelance</h1>
+          <NavLink to="/">Frelances</NavLink> <NavLink to="/posts">Posts</NavLink>
+        </header>
 
-      <main className="App-header">
-        {freelances.map(freelance => (
-          <div
-            key={freelance.id}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "0 50px",
-              backgroundColor: freelance.id === value.id ? "#73737326" : "white"
-            }}
-            onClick={() => setValue(freelance)}
-          >
-            <div
-              style={{
-                width: "15px",
-                height: "15px",
-                borderRadius: "50%",
-                backgroundColor: freelance.disponible ? "green" : "red"
-              }}
-            />
-            <p>prenom: {freelance.name}</p>
-            <p>nom: {freelance.lastname}</p>
-            <p>societe : {freelance.societe}</p>
-            <p>techno : {freelance.techno}</p>
-            <p>email : {freelance.email}</p>
-          </div>
-        ))}
-      </main>
-    </div>
+        <main className="App-header">
+          <Route
+            exact
+            path="/"
+            render={() => (
+              <div>
+                <div style={{ padding: "15px 50px" }}>
+                  <FormProfile value={value} onChange={handleChange} />
+                </div>
+                <FreelanceForm freelances={freelances} />
+              </div>
+            )}
+          />
+          <Route path="/posts" render={() => <h1>Posts</h1>} />
+        </main>
+      </div>
+    </Router>
   );
 };
 
