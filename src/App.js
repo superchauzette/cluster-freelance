@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
 import Button from "@material-ui/core/Button";
-import { Posts } from "./Posts";
-import { PageFreelance } from "./PageFreelance";
-import "./App.css";
+import { PostsPage } from "./PostsPage";
+import { FreelancesPage } from "./FreelancesPage";
+import { LoginPage } from "./LoginPage";
 
 export const App = () => {
   return (
@@ -22,11 +22,12 @@ export const App = () => {
             Posts
           </Button>
         </header>
-        {/* <div id="auth-container" /> */}
+
         <main className="App-header">
           <Switch>
-            <Route exact path="/" component={PageFreelance} />
-            <Route exact path="/posts" component={Posts} />
+            <Route path="/login" component={LoginPage} />
+            <Route exact path="/" component={FreelancesPage} />
+            <Route exact path="/posts" component={PostsPage} />
           </Switch>
         </main>
       </div>
