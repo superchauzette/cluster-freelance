@@ -11,19 +11,19 @@ export function PostsPage() {
     const unsubscribe = db
       .collection("posts")
       .limit(50)
+      .orderBy("dateMsg", "desc")
       .onSnapshot(doc => setPosts(extractData(doc)));
 
     return () => unsubscribe();
   }, []);
 
+  const savePost = draftPost => db.collection("posts").add(draftPost);
+
   return (
     <div style={{ padding: "20px" }}>
       <h1>Posts</h1>
-      <FormPost />
-
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-        <Posts posts={posts} />
-      </div>
+      <FormPost onSubmit={savePost} />
+      <Posts posts={posts} />
     </div>
   );
 }

@@ -10,16 +10,23 @@ const Post = withStyles(styles)(({ classes, post }) => {
   return (
     <Card className={classes.card}>
       <CardContent>
-        <Typography gutterBottom variant="h5" component="h2">
+        <Typography gutterBottom variant="subtitle1" inline>
           Le {dateFns.format(post.dateMsg, "D MMMM YYYY")}
         </Typography>
         <Typography component="p">{post.msg}</Typography>
         <Chip style={{ marginTop: "10px" }} label={post.techno} />
+        <Typography color="secondary">{post.name}</Typography>
       </CardContent>
     </Card>
   );
 });
 
 export function Posts({ posts }) {
-  return posts.map(post => <Post key={post.id} post={post} />);
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around" }}>
+      {posts.map(post => (
+        <Post key={post.id} post={post} />
+      ))}
+    </div>
+  );
 }
