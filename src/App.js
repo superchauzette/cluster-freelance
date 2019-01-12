@@ -1,9 +1,14 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, NavLink } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, NavLink, Redirect } from "react-router-dom";
 import Button from "@material-ui/core/Button";
 import { PostsPage } from "./PostsPage";
 import { FreelancesPage } from "./FreelancesPage";
 import { LoginPage } from "./LoginPage";
+
+const withAuth = Component => () => {
+  const user = JSON.parse(localStorage.getItem("firebaseui::rememberedAccounts"));
+  return user ? <Component /> : <Redirect to="/login" />;
+};
 
 export const App = () => {
   return (
@@ -26,8 +31,8 @@ export const App = () => {
         <main className="App-header">
           <Switch>
             <Route path="/login" component={LoginPage} />
-            <Route exact path="/" component={FreelancesPage} />
-            <Route exact path="/posts" component={PostsPage} />
+            <Route exact path="/" component={withAuth(FreelancesPage)} />
+            <Route exact path="/posts" component={withAuth(PostsPage)} />
           </Switch>
         </main>
       </div>

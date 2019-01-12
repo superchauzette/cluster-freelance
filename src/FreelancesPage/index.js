@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { extractData } from "../extractData";
-import { db, auth } from "../configFirebase";
+import { db, auth, extractData } from "../configFirebase";
 import { FormProfile } from "./FormProfile";
 import { FreelanceForm } from "./FreelanceForm";
 

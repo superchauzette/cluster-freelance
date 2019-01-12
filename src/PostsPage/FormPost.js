@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { Button, TextField, Paper } from "@material-ui/core";
 import { db } from "../configFirebase";
+
 export function FormPost() {
   const [draftPost, setDraftPost] = useState({});
+
   const handleChange = e => setDraftPost({ msg: e.target.value, dateMsg: new Date().getTime() });
+
   const savePost = e => {
     e.preventDefault();
     setDraftPost({});
     db.collection("posts").add(draftPost);
   };
+
   return (
     <Paper style={{ padding: "20px" }}>
       <form onSubmit={savePost}>
