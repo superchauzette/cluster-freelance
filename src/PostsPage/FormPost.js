@@ -1,25 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button, TextField, Paper } from "@material-ui/core";
-import { db, auth } from "../configFirebase";
 
-export function FormPost({ onSubmit }) {
-  const [draftPost, setDraftPost] = useState({});
-  const user = auth().currentUser;
-
-  useEffect(
-    () => {
-      if (user) {
-        db.collection("freelances")
-          .doc(user.uid)
-          .get()
-          .then(doc => {
-            const freelance = doc.data();
-            setDraftPost({ name: freelance.displayName });
-          });
-      }
-    },
-    [user]
-  );
+export function FormPost({ onSubmit, me }) {
+  const [draftPost, setDraftPost] = useState({ name: me.displayName });
 
   const handleSubmit = e => {
     e.preventDefault();
