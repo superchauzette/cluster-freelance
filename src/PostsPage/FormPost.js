@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Button, TextField, Paper } from "@material-ui/core";
 
 export function FormPost({ onSubmit, me }) {
-  const [draftPost, setDraftPost] = useState({ name: me.displayName });
+  const [draftPost, setDraftPost] = useState({ freelance: me });
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit(draftPost);
+    onSubmit(draftPost, me);
     setDraftPost({});
   };
 

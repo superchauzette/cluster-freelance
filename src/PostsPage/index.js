@@ -19,7 +19,7 @@ export function PostsPage() {
     return () => unsubscribe();
   }, []);
 
-  const savePost = draftPost => db.collection("posts").add(draftPost);
+  const savePost = (draftPost, freelance) => db.collection("posts").add({ ...draftPost, freelance });
 
   return (
     <div style={{ padding: "20px" }}>
