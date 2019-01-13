@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, NavLink, Redirect } from "react-router-dom";
-import Button from "@material-ui/core/Button";
+import React, { useState, useEffect, Fragment } from "react";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { PostsPage } from "./PostsPage";
 import { FreelancesPage } from "./FreelancesPage";
 import { LoginPage } from "./LoginPage";
 import { db, auth } from "./configFirebase";
+import { Header } from "./Header";
 
 const withAuth = Component => () => {
   const user = JSON.parse(localStorage.getItem("firebaseui::rememberedAccounts"));
@@ -36,21 +36,8 @@ export const App = () => {
 
   return (
     <Router>
-      <div>
-        <header style={{ padding: "0 40px", display: "flex", alignItems: "center" }}>
-          <img
-            style={{ height: "100px" }}
-            src="https://www.cluster-freelance.io/src/images/dist/logo-main.png"
-            alt="logo"
-          />
-          <Button variant="contained" color="primary" component={NavLink} to="/" style={{ margin: "20px" }}>
-            Frelances
-          </Button>
-          <Button variant="contained" color="secondary" component={NavLink} to="/posts">
-            Posts
-          </Button>
-        </header>
-
+      <Fragment>
+        <Header />
         <main className="App-header">
           <UserContext.Provider value={me}>
             <Switch>
@@ -60,7 +47,7 @@ export const App = () => {
             </Switch>
           </UserContext.Provider>
         </main>
-      </div>
+      </Fragment>
     </Router>
   );
 };
