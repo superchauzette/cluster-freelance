@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { db, extractData } from "../configFirebase";
 import { Posts } from "./Posts";
 import { FormPost } from "./FormPost";
+import { UserContext } from "../App";
 
 export function PostsPage() {
   const [posts, setPosts] = useState([]);
+  const me = useContext(UserContext);
 
   // Get Posts
   useEffect(() => {
@@ -22,7 +24,7 @@ export function PostsPage() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Posts</h1>
-      <FormPost onSubmit={savePost} />
+      {me && <FormPost onSubmit={savePost} me={me} />}
       <Posts posts={posts} />
     </div>
   );

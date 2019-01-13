@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { db, auth, extractData } from "../configFirebase";
 import { FormProfile } from "./FormProfile";
-import { FreelanceForm } from "./FreelanceForm";
+import { Freelances } from "./Freelances";
 
 const getFreelances = () =>
   db
@@ -71,10 +71,8 @@ export function FreelancesPage() {
 
   return (
     <div>
-      <div style={{ padding: "15px 50px" }}>
-        <FormProfile value={value} onChange={handleChange} />
-      </div>
-      <FreelanceForm freelances={freelances} />
+      <FormProfile value={value} onChange={handleChange} />
+      <Freelances freelances={freelances} />
     </div>
   );
 }

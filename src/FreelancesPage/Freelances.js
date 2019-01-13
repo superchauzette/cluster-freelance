@@ -7,16 +7,18 @@ import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Chip from "@material-ui/core/Chip";
 import { Dot } from "./Dot";
+import { Box, Flex } from "rebass";
 
-export function FreelanceForm({ freelances }) {
+export function Freelances({ freelances }) {
   return (
-    <div style={{ padding: "20px 50px" }}>
+    <Box p={["10px 10px", "20px 50px"]}>
       {freelances.map(freelance => (
         <ExpansionPanel key={freelance.uid}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <div style={{ display: "flex", alignItems: "center", width: "100%", justifyContent: "space-between" }}>
               <div style={{ display: "flex", alignItems: "center" }}>
                 <Dot color={freelance.disponible ? "green" : "red"} />
+
                 <Typography style={{ marginLeft: "10px" }}>{`${freelance.name} ${freelance.lastname}`}</Typography>
                 <Typography style={{ marginLeft: "3px" }}>
                   {`${
@@ -28,20 +30,28 @@ export function FreelanceForm({ freelances }) {
               </div>
               <div>
                 {freelance.techno &&
-                  freelance.techno.split(",").map(tech => <Chip style={{ marginLeft: "10px" }} label={tech} />)}
+                  freelance.techno
+                    .split(",")
+                    .map(tech => <Chip style={{ marginLeft: "10px", marginBottom: "5px" }} label={tech} />)}
               </div>
             </div>
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
-            <Typography>
-              <p>nom: {freelance.lastname}</p>
-              <p>societe : {freelance.societe}</p>
-              <p>techno : {freelance.techno}</p>
-              <p>email : {freelance.email}</p>
-            </Typography>
+            <Flex flexDirection={["column", "row"]}>
+              <Flex flexDirection={"column"} mx="30px">
+                <Typography>Nom: {freelance.lastname}</Typography>
+                <Typography>Societe : {freelance.societe}</Typography>
+                <Typography>Techno : {freelance.techno}</Typography>
+              </Flex>
+              <Flex flexDirection="column" mx="30px">
+                <Typography>Email : {freelance.email}</Typography>
+                <Typography>Expérience: </Typography>
+                <Typography>TJM: </Typography>
+              </Flex>
+            </Flex>
           </ExpansionPanelDetails>
         </ExpansionPanel>
       ))}
-    </div>
+    </Box>
   );
 }

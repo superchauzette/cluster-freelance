@@ -1,9 +1,10 @@
 import React from "react";
 import dateFns from "date-fns";
 import { withStyles, Chip, Card, CardContent, Typography } from "@material-ui/core";
+import { Flex } from "rebass";
 
 const styles = {
-  card: { maxWidth: 345, margin: 20 }
+  card: { width: 345, maxWidth: 345, margin: 20 }
 };
 
 const Post = withStyles(styles)(({ classes, post }) => {
@@ -23,10 +24,10 @@ const Post = withStyles(styles)(({ classes, post }) => {
 
 export function Posts({ posts }) {
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-around" }}>
+    <Flex flexDirection="column" alignItems="center">
       {posts.map(post => (
         <Post key={post.id} post={post} />
       ))}
-    </div>
+    </Flex>
   );
 }
