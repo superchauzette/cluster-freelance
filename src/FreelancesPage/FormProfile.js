@@ -29,12 +29,11 @@ export function FormProfile({ value, onChange }) {
             <BigAvatar src={value.photoURL} alt="profil" />
             <Flex flexDirection={["column", "column"]} justifyContent="space-around" width="100%">
               <Flex flexDirection={["column", "row"]} justifyContent="space-around" width="100%">
-                {value.disponible !== undefined && (
                   <FormControlLabel
                     control={
                       <Switch
                         value={value.disponible}
-                        checked={value.disponible}
+                        checked={Boolean(value.disponible)} // why ?
                         color={"primary"}
                         onChange={e =>
                           onChange({ disponible: e.target.checked, dateModifDispo: new Date().getTime() })(e)
@@ -43,7 +42,6 @@ export function FormProfile({ value, onChange }) {
                     }
                     label="Disponible"
                   />
-                )}
                 <Input label="Prenom" value={value.name} onChange={onChange("name")} />
                 <Input label="Nom" value={value.lastname} onChange={onChange("lastname")} />
               </Flex>
