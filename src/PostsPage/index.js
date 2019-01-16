@@ -19,12 +19,17 @@ export function PostsPage() {
     return () => unsubscribe();
   }, []);
 
-  const savePost = (draftPost, freelance) => db.collection("posts").add({ ...draftPost, freelance });
+  const savePost = draftPost =>
+    db.collection("posts").add({
+      ...draftPost,
+      freelance: me,
+      dateMsg: new Date().getTime()
+    });
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Posts</h1>
-      {me && <FormPost onSubmit={savePost} me={me} />}
+      <FormPost onSubmit={savePost} />
       <Posts posts={posts} />
     </div>
   );

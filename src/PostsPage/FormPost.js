@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Button, TextField, Paper } from "@material-ui/core";
 
 export function FormPost({ onSubmit, me }) {
-  const [draftPost, setDraftPost] = useState({ freelance: me });
+  const [draftPost, setDraftPost] = useState({});
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit(draftPost, me);
-    setDraftPost({});
+    onSubmit(draftPost);
   };
+
+  const handleChange = key => e => setDraftPost({ ...draftPost, [key]: e.target.value });
 
   return (
     <Paper style={{ padding: "20px" }}>
@@ -24,7 +25,7 @@ export function FormPost({ onSubmit, me }) {
             placeholder="Poster un annonce"
             InputLabelProps={{ shrink: true }}
             value={draftPost.msg}
-            onChange={e => setDraftPost({ ...draftPost, msg: e.target.value, dateMsg: new Date().getTime() })}
+            onChange={handleChange("msg")}
           />
           <div style={{ dispaly: "flex" }}>
             <TextField
@@ -34,7 +35,7 @@ export function FormPost({ onSubmit, me }) {
               placeholder="Ajouter les technos utilisé"
               InputLabelProps={{ shrink: true }}
               value={draftPost.techno}
-              onChange={e => setDraftPost({ ...draftPost, techno: e.target.value })}
+              onChange={handleChange("techno")}
             />
             <TextField
               style={{ margin: "0 20px", width: "40%" }}
@@ -44,7 +45,7 @@ export function FormPost({ onSubmit, me }) {
               placeholder="Ajouter les technos utilisé"
               InputLabelProps={{ shrink: true }}
               value={draftPost.tjm}
-              onChange={e => setDraftPost({ ...draftPost, tjm: e.target.value })}
+              onChange={handleChange("tjm")}
             />
           </div>
         </div>
