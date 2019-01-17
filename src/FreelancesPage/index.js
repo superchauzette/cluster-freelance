@@ -1,23 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { db, auth, extractData } from "../configFirebase";
+import React, { useState, useEffect, useContext } from "react";
+import { db, extractData } from "../configFirebase";
 import { FormProfile } from "./FormProfile";
 import { Freelances } from "./Freelances";
-
-const getFreelances = () =>
-  db
-    .collection("freelances")
-    .limit(50)
-    .get()
-    .then(extractData);
-
-const isAlreadySave = (freelancesData, user) => freelancesData.map(f => f.uid).includes(user.uid);
+import { UserContext } from "../App";
 
 function useFormChange() {
   const [value, setValue] = useState({});
 
   const handleChange = key => ({ target }) => {
-    const valueInput = target.type === "checkbox" ? target.checked : target.value;
-    const newValue = typeof key === "object" ? { ...value, ...key } : { ...value, [key]: valueInput };
+    const valueInput =
+      target.type === "checkbox" ? target.checked : target.value;
+    const newValue =
+      typeof key === "object"
+        ? { ...value, ...key }
+        : { ...value, [key]: valueInput };
 
     setValue(newValue);
     if (value.uid) {
@@ -33,40 +29,19 @@ function useFormChange() {
 export function FreelancesPage() {
   const [freelances, setFreelances] = useState([]);
   const [value, handleChange, setValueProfil] = useFormChange();
+  const user = useContext(UserContext);
 
   // Init Freelances
   useEffect(() => {
     db.collection("freelances")
       .limit(50)
-      .onSnapshot(snap => setFreelances(extractData(snap)));
-  }, []);
-
-  // Init Profil
-  useEffect(() => {
-    (async () => {
-      const freelancesData = await getFreelances();
-      setFreelances(freelancesData);
-      const user = auth().currentUser;
-      if (!isAlreadySave(freelancesData, user)) {
-        const [name, lastname] = user.displayName && user.displayName.split(" ");
-        const userData = {
-          uid: user.uid,
-          name,
-          lastname,
-          displayName: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL
-        };
-        setValueProfil(userData);
-
-        db.collection("freelances")
-          .doc(userData.uid)
-          .set(userData);
-      } else {
-        const userProfil = freelancesData.find(f => f.uid === user.uid);
+      .onSnapshot(snap => {
+        const freelances = extractData(snap);
+        setFreelances(freelances);
+        // Init Profil
+        const userProfil = freelances.find(f => f.uid === user.uid);
         setValueProfil(userProfil);
-      }
-    })();
+      });
   }, []);
 
   return (
