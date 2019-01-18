@@ -1,10 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { CircularProgress } from "@material-ui/core";
 import { Flex } from "rebass";
 import { PostsPage } from "./PostsPage";
@@ -32,8 +27,7 @@ function useMe() {
           .then(doc => doc.data())
           .then(freelance => {
             if (!freelance) {
-              const [name, lastname] =
-                user.displayName && user.displayName.split(" ");
+              const [name, lastname] = user.displayName && user.displayName.split(" ");
               const userData = {
                 uid: user.uid,
                 name,
@@ -59,7 +53,7 @@ function useMe() {
 export const App = () => {
   const [me, noUser] = useMe();
   const withAuthUser = withAuth(me);
-  console.log("me", me, noUser);
+
   return (
     <Router>
       <Fragment>
@@ -68,27 +62,15 @@ export const App = () => {
         <main className="App-header">
           <UserContext.Provider value={me}>
             {!me && !noUser ? (
-              <Flex
-                style={{ height: "100vh" }}
-                alignItems="center"
-                justifyContent="center"
-                width="100%">
+              <Flex style={{ height: "100vh" }} alignItems="center" justifyContent="center" width="100%">
                 <CircularProgress />
                 <p style={{ marginLeft: "10px" }}>Loading...</p>
               </Flex>
             ) : (
               <Switch>
                 <Route path="/login" component={LoginPage} />
-                <Route
-                  exact
-                  path="/"
-                  component={withAuthUser(FreelancesPage)}
-                />
-                <Route
-                  exact
-                  path="/posts"
-                  component={withAuthUser(PostsPage)}
-                />
+                <Route exact path="/" component={withAuthUser(FreelancesPage)} />
+                <Route exact path="/posts" component={withAuthUser(PostsPage)} />
               </Switch>
             )}
           </UserContext.Provider>

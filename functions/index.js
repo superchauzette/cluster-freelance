@@ -13,10 +13,6 @@ const getAuth = () => ({
   pass: functions.config().auth.pass
 });
 
-exports.sendEmail = functions.https.onRequest((req, res) => {
-  sendEmail({ msg: `hello` }, msg => res.send(msg));
-});
-
 exports.sendEmailByPosts = functions.firestore.document("posts/{postId}").onCreate((snap, context) => {
   const post = snap.data();
   db.collection("freelances")

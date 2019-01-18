@@ -19,12 +19,12 @@ export function Header() {
         </NavLink>
         <NavLink to="/" style={styles.link}>
           <Typography variant="h6" color="inherit">
-            Frelances
+            Freelances
           </Typography>
         </NavLink>
         <NavLink to="/posts" style={styles.link}>
           <Typography variant="h6" color="inherit">
-            Post
+            Posts
           </Typography>
         </NavLink>
       </Toolbar>

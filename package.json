@@ -2,6 +2,14 @@
   "name": "cluster-frelance",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "deploy": "npm run build && firebase deploy",
+    "login": "firebase login"
+  },
   "dependencies": {
     "@material-ui/core": "^3.8.3",
     "@material-ui/icons": "^3.0.2",
@@ -17,13 +25,13 @@
     "rebass": "^3.0.0-12",
     "styled-components": "^4.1.3"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "npm run build && firebase deploy",
-    "login": "firebase login"
+  "devDependencies": {
+    "@firebase/app-types": "^0.3.2",
+    "eslint-plugin-promise": "^4.0.1",
+    "eslint-plugin-react-hooks": "^0.0.0",
+    "firebase-admin": "^6.5.0",
+    "firebase-functions": "^2.1.0",
+    "firebase-tools": "^6.2.2"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -39,13 +47,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "devDependencies": {
-    "@firebase/app-types": "^0.3.2",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-react-hooks": "^0.0.0",
-    "firebase-admin": "^6.5.0",
-    "firebase-functions": "^2.1.0",
-    "firebase-tools": "^6.2.2"
-  }
+  ]
 }

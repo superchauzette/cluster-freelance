@@ -8,5 +8,6 @@ export const LoginPage = () => {
       signInSuccessUrl: "/"
     });
   }, []);
+
   return <div id="auth-container" />;
 };
