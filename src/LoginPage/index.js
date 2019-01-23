@@ -25,7 +25,10 @@ export const LoginPage = () => {
       justifyContent="center"
     >
       <Flex mt="-200px" flexDirection="column" alignItems="center" justifyContent="center">
-        <Image src="https://cluster-freelance.io/src/images/dist/logo-main.png" width="600px" />
+        <Image
+          src="https://cluster-freelance.io/src/images/dist/logo-main.png"
+          style={{ width: "625px", height: "300px" }}
+        />
         <div id="auth-container" />
       </Flex>
     </Flex>
