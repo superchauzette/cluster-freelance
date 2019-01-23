@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { CircularProgress } from "@material-ui/core";
 import { Flex } from "rebass";
@@ -7,10 +7,6 @@ import { FreelancesPage } from "./FreelancesPage";
 import { LoginPage } from "./LoginPage";
 import { db, auth } from "./configFirebase";
 import { Header } from "./Header";
-
-const withAuth = user => Component => () => {
-  return user ? <Component /> : <Redirect to="/login" />;
-};
 
 export const UserContext = React.createContext();
 
@@ -50,32 +46,43 @@ function useMe() {
   return [me, noUser];
 }
 
-export const App = () => {
-  const [me, noUser] = useMe();
+const withAuth = user => Component => () => (user ? <Component /> : <Redirect to="/login" />);
+
+function Main({ me }) {
   const withAuthUser = withAuth(me);
 
   return (
-    <Router>
-      <Fragment>
-        {noUser && <Redirect to="/login" />}
-        <Header />
-        <main className="App-header">
-          <UserContext.Provider value={me}>
-            {!me && !noUser ? (
-              <Flex style={{ height: "100vh" }} alignItems="center" justifyContent="center" width="100%">
-                <CircularProgress />
-                <p style={{ marginLeft: "10px" }}>Loading...</p>
-              </Flex>
-            ) : (
-              <Switch>
-                <Route path="/login" component={LoginPage} />
-                <Route exact path="/" component={withAuthUser(FreelancesPage)} />
-                <Route exact path="/posts" component={withAuthUser(PostsPage)} />
-              </Switch>
-            )}
-          </UserContext.Provider>
-        </main>
-      </Fragment>
-    </Router>
+    <>
+      <Header />
+      <main className="App-header">
+        <Route exact path="/" component={withAuthUser(FreelancesPage)} />
+        <Route path="/posts" component={withAuthUser(PostsPage)} />
+      </main>
+    </>
+  );
+}
+
+function Lodaer() {
+  return (
+    <Flex style={{ height: "100vh" }} alignItems="center" justifyContent="center" width="100%">
+      <CircularProgress />
+      <p style={{ marginLeft: "10px" }}>Loading...</p>
+    </Flex>
+  );
+}
+
+export const App = () => {
+  const [me, noUser] = useMe();
+
+  return (
+    <UserContext.Provider value={me}>
+      <Router>
+        <Switch>
+          {noUser && <Redirect to="/login" />}
+          <Route path="/login" component={LoginPage} />
+          {!me && !noUser ? <Lodaer /> : <Main me={me} />}
+        </Switch>
+      </Router>
+    </UserContext.Provider>
   );
 };
