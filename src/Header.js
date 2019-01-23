@@ -8,7 +8,7 @@ const styles = {
 
 export function Header() {
   return (
-    <AppBar position="static" color="white">
+    <AppBar position="static" color="blue">
       <Toolbar>
         <NavLink to="/" style={styles.link}>
           <img

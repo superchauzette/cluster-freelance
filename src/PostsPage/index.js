@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
+import { Heading } from "rebass";
 import { db, extractData } from "../configFirebase";
 import { Posts } from "./Posts";
 import { FormPost } from "./FormPost";
@@ -28,7 +29,9 @@ export function PostsPage() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>Posts</h1>
+      <Heading color="white" mb="30px" fontSize="36px">
+        Posts
+      </Heading>
       <FormPost onSubmit={savePost} />
       <Posts posts={posts} />
     </div>

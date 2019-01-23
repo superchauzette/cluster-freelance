@@ -5,11 +5,18 @@ import { Flex, Box, Card, Text, Image } from "rebass";
 
 const Post = ({ post }) => {
   return (
-    <Card m="15px" p="15px" width={["100%", "600px"]} borderRadius={4} boxShadow="0 2px 16px rgba(0, 0, 0, 0.25)">
+    <Card
+      m="15px"
+      p="15px"
+      width={["100%", "600px"]}
+      borderRadius={4}
+      boxShadow="0 2px 16px rgba(0, 0, 0, 0.25)"
+      bg="white"
+    >
       <Flex>
         <Flex justifyContent="center" flexDirection="column">
           <div>
-            <Image src={post.freelance.photoURL} width="150px" borderRadius={"50%"} style={{ maxWidth: "150px" }} />
+            <Image src={post.freelance.photoURL} width={["100px", "150px"]} borderRadius={"50%"} style={{ maxWidth: "150px" }} />
           </div>
         </Flex>
         <Box flexDirection="column" py="10px" px="20px">
