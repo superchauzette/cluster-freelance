@@ -32,6 +32,9 @@ function useMe() {
                 photoURL: user.photoURL
               };
               setMe(userData);
+              db.collection("freelances")
+                .doc(user.uid)
+                .set(userData);
             } else {
               setMe(freelance);
             }
