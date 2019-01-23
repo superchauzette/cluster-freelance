@@ -67,11 +67,13 @@ export const App = () => {
   return (
     <UserContext.Provider value={me}>
       <Router>
-        <Switch>
+        <>
           {noUser && <Redirect to="/login" />}
-          <Route path="/login" component={LoginPage} />
-          {!me && !noUser ? <Lodaer /> : <Main me={me} />}
-        </Switch>
+          <Switch>
+            <Route path="/login" component={LoginPage} />
+            {!me && !noUser ? <Lodaer /> : <Main me={me} />}
+          </Switch>
+        </>
       </Router>
     </UserContext.Provider>
   );
